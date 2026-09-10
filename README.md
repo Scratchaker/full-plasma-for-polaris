@@ -16,3 +16,9 @@ Launch a full KDE Pasma session with polaris's Private Stream (https://github.co
     3. Set `Working Directory` to `$HOME`.
 10. Add a Moonlight/Nova client from `Polaris Web UI > Devices`.
 11. Open the `Plasma` app from your client.
+# Troublesooting
+### Mouse capture
+
+Some games that capture the mouse for in-game camera movement may not capture it correctly, preventing the camera from moving. This is a known issue that we are currently working to fix.
+
+**Temporary workaround:** When a game needs to capture the mouse, press the **Right Ctrl** key while the stream is focused.
