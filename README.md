@@ -1,2 +1,18 @@
-# full-plasma-for-polaris
+# Full Plasma for Polaris
 Launch a full KDE Pasma session with polaris's Private Stream (https://github.com/papi-ux/polaris)
+
+# Installation
+1. [Install polaris](https://github.com/papi-ux/polaris).
+2. Enable linger for your user: `loginctl enable-linger`.
+3. Setup polaris for headless acess: `sudo -H polaris --setup-host --enable-kms --enable-headless-boot`.
+4. Enable polaris service `systemctl --user enable --now polaris`.
+5. Reboot.
+6. Go to `https://localhost:47990/` and create an account.
+7. Select `Private Stream` from `Polaris Web UI > Settings > Audio/Video`.
+8. Save `plasma.sh`(from the repo) and make it executable.
+9. Add `plasma.sh` as an app in `Polaris Web UI > Library > Add New`.
+    1. Set `Application Name` to `Plasma`.
+    2. Set `Command` to the full path to `plasma.sh`.
+    3. Set `Working Directory` to `$HOME`.
+10. Add a Moonlight/Nova client from `Polaris Web UI > Devices`.
+11. Open the `Plasma` app from your client.
