@@ -2,7 +2,16 @@
 Launch a full KDE Pasma session with polaris's Private Stream (https://github.com/papi-ux/polaris)
 
 # Installation
-1. [Install polaris](https://github.com/papi-ux/polaris).
+### Dependencies
+- Polaris
+- labwc
+- KDE Plasma Wayland
+- xwayland
+- dbus
+- zenity
+
+### Installation steps
+1. [Install polaris](https://github.com/papi-ux/polaris) and all dependencies.
 2. Enable linger for your user: `loginctl enable-linger`.
 3. Setup polaris for headless acess: `sudo -H polaris --setup-host --enable-kms --enable-headless-boot`.
 4. Enable polaris service `systemctl --user enable --now polaris`.
