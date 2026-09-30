@@ -25,12 +25,29 @@ export SUDO_ASKPASS="$XDG_RUNTIME_DIR/nested-plasma/zenity-askpass"
 
 cat > "$XDG_RUNTIME_DIR/nested-plasma/pkexec" <<'EOF'
 #!/bin/sh
-case "$1" in
-    -*)
-        echo "pkexec shim: unsupported flag '$1'" >&2
-        exit 1
-        ;;
-esac
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --disable-internal-agent|--keep-cwd)
+            shift
+            ;;
+        --)
+            shift
+            break
+            ;;
+        -*)
+            echo "pkexec shim: unsupported flag '$1'" >&2
+            exit 1
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
+if [ $# -eq 0 ]; then
+    echo "pkexec shim: no command given" >&2
+    exit 1
+fi
 exec sudo -k -A "$@"
 EOF
 chmod +x "$XDG_RUNTIME_DIR/nested-plasma/pkexec"
