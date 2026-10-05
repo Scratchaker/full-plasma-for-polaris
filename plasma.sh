@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 set -e
 
+# Get resolution
 PLASMA_WIDTH=${POLARIS_CLIENT_WIDTH:-1920}
 PLASMA_HEIGHT=${POLARIS_CLIENT_HEIGHT:-1080}
 
+# Write wrapper
 mkdir -p "$XDG_RUNTIME_DIR/nested-plasma"
 
 cat > "$XDG_RUNTIME_DIR/nested-plasma/kwin_wayland_wrapper" <<EOF
@@ -15,6 +17,7 @@ exec /usr/bin/kwin_wayland_wrapper \
 EOF
 chmod +x "$XDG_RUNTIME_DIR/nested-plasma/kwin_wayland_wrapper"
 
+# pkexec management
 cat > "$XDG_RUNTIME_DIR/nested-plasma/zenity-askpass" <<'EOF'
 #!/bin/sh
 exec zenity --password --title="Authentication Required"
@@ -52,7 +55,14 @@ exec sudo -k -A "$@"
 EOF
 chmod +x "$XDG_RUNTIME_DIR/nested-plasma/pkexec"
 
+# Path
 export PATH="$XDG_RUNTIME_DIR/nested-plasma:$PATH"
 
+# Exports
+export XDG_SESSION_DESKTOP=KDE
+export DESKTOP_SESSION=plasma
+export XDG_SEAT=seat0
+export XDG_SESSION_CLASS=user
 
+# Run Plasma
 dbus-run-session startplasma-wayland &
