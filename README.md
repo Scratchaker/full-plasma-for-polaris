@@ -46,6 +46,8 @@ When watching videos in Chromium based browser through the stream, toggling full
    
     **Brave:** `echo '--disable-gpu-compositing' >> ~/.config/brave-flags.conf`
 
+*(Or use `~/.var/app/<AppID>/config/<browser>-flags.conf` for browsers installed trough flatpak)*
+
 2. **Check if it worked.**
 
    Restart the browser fully (quit all windows/processes).
