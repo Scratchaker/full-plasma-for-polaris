@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -e
 
+trap 'cleanup' EXIT
+cleanup() {
+    systemctl --user restart xdg-document-portal xdg-desktop-portal
+}
+
 # Get resolution
 PLASMA_WIDTH=${POLARIS_CLIENT_WIDTH:-1920}
 PLASMA_HEIGHT=${POLARIS_CLIENT_HEIGHT:-1080}
@@ -9,7 +14,7 @@ PLASMA_HEIGHT=${POLARIS_CLIENT_HEIGHT:-1080}
 mkdir -p "$XDG_RUNTIME_DIR/nested-plasma"
 
 cat > "$XDG_RUNTIME_DIR/nested-plasma/kwin_wayland_wrapper" <<EOF
-#!/bin/sh
+#!/usr/bin/env bash
 exec /usr/bin/kwin_wayland_wrapper \
     --width "$PLASMA_WIDTH" \
     --height "$PLASMA_HEIGHT" \
@@ -19,7 +24,7 @@ chmod +x "$XDG_RUNTIME_DIR/nested-plasma/kwin_wayland_wrapper"
 
 # pkexec management
 cat > "$XDG_RUNTIME_DIR/nested-plasma/zenity-askpass" <<'EOF'
-#!/bin/sh
+#!/usr/bin/env bash
 exec zenity --password --title="Authentication Required"
 EOF
 chmod +x "$XDG_RUNTIME_DIR/nested-plasma/zenity-askpass"
@@ -27,7 +32,7 @@ chmod +x "$XDG_RUNTIME_DIR/nested-plasma/zenity-askpass"
 export SUDO_ASKPASS="$XDG_RUNTIME_DIR/nested-plasma/zenity-askpass"
 
 cat > "$XDG_RUNTIME_DIR/nested-plasma/pkexec" <<'EOF'
-#!/bin/sh
+#!/usr/bin/env bash
 while [ $# -gt 0 ]; do
     case "$1" in
         --disable-internal-agent|--keep-cwd)
@@ -55,6 +60,17 @@ exec sudo -k -A "$@"
 EOF
 chmod +x "$XDG_RUNTIME_DIR/nested-plasma/pkexec"
 
+# Chromium-based browsers: disable GPU compositing
+for browser in "chromium" "google-chrome-stable" "google-chrome" "brave" "brave-browser" "microsoft-edge-stable" "vivaldi-stable"; do
+    real="/usr/bin/$browser"
+    [ -x "$real" ] || continue
+    cat > "$XDG_RUNTIME_DIR/nested-plasma/$browser" <<EOF
+#!/usr/bin/env bash
+exec "$real" --disable-gpu-compositing "\$@"
+EOF
+    chmod +x "$XDG_RUNTIME_DIR/nested-plasma/$browser"
+done
+
 # Path
 export PATH="$XDG_RUNTIME_DIR/nested-plasma:$PATH"
 
@@ -66,3 +82,4 @@ export XDG_SESSION_CLASS=user
 
 # Run Plasma
 dbus-run-session startplasma-wayland &
+
